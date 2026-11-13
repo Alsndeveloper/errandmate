@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  errandmate-api:
+    build: .
+    container_name: errandmate_server
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      - SECRET_KEY=errandmate-production-secure-key-2026
+    volumes:
+      - ./ErrandMate/ErrandMate.db:/app/ErrandMate/ErrandMate.db
+    restart: unless-stopped

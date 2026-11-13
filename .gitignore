@@ -1,0 +1,24 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local databases (may contain personal data)
+*.db
+*.db-wal
+*.db-shm
+
+# Private notes (AI-generated drafts, not part of the project)
+ERRANDMATE_SYSTEM_GRID.md
+LINKEDIN_GITHUB_SHOWCASE.md
+CV_SHOWCASE.md
+
+# OS
+.DS_Store
+Thumbs.db
