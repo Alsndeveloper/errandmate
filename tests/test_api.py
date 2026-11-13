@@ -74,7 +74,44 @@ def test_registration_with_personal_identification():
     assert user["residential_address"] == "14 Maplewood Street, Roath"
     assert user["postcode"] == "CF24 9ZZ"
     assert user["id_type"] == "UK Driving Licence"
-    assert user["is_id_verified"] == 1
+    # ID details are self-declared; nothing checks the document, so the
+    # account must NOT be marked as verified.
+    assert user["is_id_verified"] == 0
+
+
+def test_registration_without_id_does_not_invent_one():
+    res = client.post("/api/auth/register", json={
+        "full_name": "No ID User",
+        "email": f"noid_{uuid.uuid4().hex[:8]}@example.com",
+        "phone": "+447888999222",
+        "password": "Password123!",
+        "role": "both",
+    })
+    assert res.status_code == 201
+    user = res.json()["user"]
+    assert user["id_number"] is None
+    assert user["is_id_verified"] == 0
+
+
+def test_public_task_list_hides_phone_numbers():
+    res = client.get("/api/tasks")
+    assert res.status_code == 200
+    for task in res.json():
+        assert "poster_phone" not in task
+        assert "runner_phone" not in task
+
+
+def test_only_admin_can_toggle_agent():
+    reg = client.post("/api/auth/register", json={
+        "full_name": "Regular User",
+        "email": f"regular_{uuid.uuid4().hex[:8]}@example.com",
+        "phone": "+447888999333",
+        "password": "Password123!",
+        "role": "both",
+    })
+    token = reg.json()["access_token"]
+    res = client.post("/api/ai/toggle-agent", headers={"Authorization": f"Bearer {token}"})
+    assert res.status_code == 403
 
 
 def test_task_creation_and_lifecycle():
