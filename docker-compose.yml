@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   errandmate-api:
     build: .
@@ -10,7 +8,12 @@ services:
       - HOST=0.0.0.0
       - PORT=8000
       - DEBUG=false
-      - SECRET_KEY=errandmate-production-secure-key-2026
+      - DATABASE_PATH=/data/ErrandMate.db
+      # Set SECRET_KEY in your shell or a .env file; never commit a real key.
+      - SECRET_KEY=${SECRET_KEY:?Set SECRET_KEY before running docker compose}
     volumes:
-      - ./ErrandMate/ErrandMate.db:/app/ErrandMate/ErrandMate.db
+      - errandmate-data:/data
     restart: unless-stopped
+
+volumes:
+  errandmate-data:

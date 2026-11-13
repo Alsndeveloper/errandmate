@@ -15,8 +15,8 @@ def now_iso() -> str:
 def get_task_query_base() -> str:
     return """
         SELECT t.*,
-               u.full_name as poster_name, u.phone as poster_phone,
-               r.full_name as runner_name, r.phone as runner_phone,
+               u.full_name as poster_name,
+               r.full_name as runner_name,
                (SELECT AVG(rating) FROM ratings WHERE runner_id = t.runner_id) as runner_rating
         FROM tasks t
         JOIN users u ON t.poster_id = u.id

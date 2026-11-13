@@ -114,8 +114,10 @@ def get_ai_telemetry():
 @router.post("/toggle-agent")
 def toggle_agent(current_user: dict = Depends(get_current_user)):
     """
-    Toggles the autonomous agent dispatch mode.
+    Toggles the autonomous agent dispatch mode (platform-wide, so admin only).
     """
+    if current_user.get("username") != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only the admin can toggle the agent.")
     ai_agent.auto_dispatch_enabled = not ai_agent.auto_dispatch_enabled
     return {
         "auto_dispatch_enabled": ai_agent.auto_dispatch_enabled,

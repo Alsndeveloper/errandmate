@@ -90,9 +90,7 @@ class TaskResponse(BaseModel):
     poster_id: int
     runner_id: Optional[int] = None
     poster_name: Optional[str] = None
-    poster_phone: Optional[str] = None
     runner_name: Optional[str] = None
-    runner_phone: Optional[str] = None
     runner_rating: Optional[float] = None
     posted_on: Optional[str] = None
     accepted_on: Optional[str] = None
