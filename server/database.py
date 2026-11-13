@@ -39,11 +39,11 @@ def init_db():
             phone TEXT NOT NULL,
             password TEXT NOT NULL,
             role TEXT DEFAULT 'both',
-            id_type TEXT DEFAULT 'Passport',
+            id_type TEXT,
             id_number TEXT,
             residential_address TEXT,
             postcode TEXT,
-            is_id_verified INTEGER DEFAULT 1,
+            is_id_verified INTEGER DEFAULT 0,
             tasks_done INTEGER DEFAULT 0,
             joined_date TEXT DEFAULT CURRENT_TIMESTAMP
         )""")
@@ -61,7 +61,7 @@ def init_db():
         if "postcode" not in user_cols:
             c.execute("ALTER TABLE users ADD COLUMN postcode TEXT")
         if "is_id_verified" not in user_cols:
-            c.execute("ALTER TABLE users ADD COLUMN is_id_verified INTEGER DEFAULT 1")
+            c.execute("ALTER TABLE users ADD COLUMN is_id_verified INTEGER DEFAULT 0")
 
         c.execute("""CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

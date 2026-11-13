@@ -9,7 +9,7 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 def register(user_data: UserRegister):
-    """Registers a new user with personal identity verification and returns an access token."""
+    """Registers a new user (ID details optional, self-declared) and returns an access token."""
     clean_email = user_data.email.strip().lower()
 
     with get_db() as conn:
@@ -25,15 +25,17 @@ def register(user_data: UserRegister):
 
         cursor = conn.execute(
             """INSERT INTO users (full_name, email, phone, password, role, id_type, id_number, residential_address, postcode, is_id_verified)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)""",
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)""",
             (
                 user_data.full_name.strip(),
                 clean_email,
                 user_data.phone.strip(),
                 password_hash,
                 user_data.role,
-                user_data.id_type or "Passport",
-                user_data.id_number.strip() if user_data.id_number else "VERIFIED-" + clean_email[:4].upper(),
+                # ID details are self-declared only. No document check happens, so new
+                # accounts start unverified (is_id_verified = 0) and no ID is invented.
+                user_data.id_type if user_data.id_number else None,
+                user_data.id_number.strip() if user_data.id_number else None,
                 user_data.residential_address.strip() if user_data.residential_address else None,
                 user_data.postcode.strip().upper() if user_data.postcode else None,
             ),

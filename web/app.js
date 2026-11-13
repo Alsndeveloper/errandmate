@@ -279,7 +279,7 @@ async function handleRegisterSubmit(e) {
     closeModal("modal-register");
     updateAuthUI();
     updateGreeting();
-    showToast(`Account verified & created! Welcome to ErrandMate, ${res.user.full_name}!`);
+    showToast(`Account created! Welcome to ErrandMate, ${res.user.full_name}!`);
     navigate("dashboard");
   } catch (err) {
     showToast(err.message || "Registration failed", true);
@@ -680,12 +680,14 @@ async function loadProfile() {
 
   const idBadge = document.getElementById("profile-card-id-badge");
   if (idBadge) {
-    idBadge.innerText = `Verified: ${state.user.id_type || "Passport"}`;
+    idBadge.innerText = state.user.is_id_verified
+      ? `Verified: ${state.user.id_type || "ID"}`
+      : "ID not verified";
   }
 
   const postcodeEl = document.getElementById("profile-card-postcode");
   if (postcodeEl) {
-    postcodeEl.innerText = state.user.postcode || "CF24 9ZZ";
+    postcodeEl.innerText = state.user.postcode || "Not provided";
   }
 
   document.getElementById("profile-name").value = state.user.full_name;
@@ -793,8 +795,8 @@ async function openTaskDetails(taskId) {
 
     document.getElementById("detail-location").innerText = task.location;
     document.getElementById("detail-deadline").innerText = task.deadline || "Flexible";
-    document.getElementById("detail-poster").innerText = `${task.poster_name} (ID Verified)`;
-    document.getElementById("detail-runner").innerText = task.runner_name ? `${task.runner_name} (ID Verified)` : "Unassigned";
+    document.getElementById("detail-poster").innerText = task.poster_name;
+    document.getElementById("detail-runner").innerText = task.runner_name || "Unassigned";
     document.getElementById("detail-description").innerText = task.description || "No specific instructions provided.";
 
     // Cancellation banner
