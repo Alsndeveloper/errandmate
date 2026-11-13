@@ -28,11 +28,11 @@ class UserResponse(BaseModel):
     phone: str
     role: str
     username: Optional[str] = None
-    id_type: Optional[str] = "Passport"
-    id_number: Optional[str] = None
+    id_type: Optional[str] = None
+    id_number: Optional[str] = None  # masked: only last 4 characters are stored
     residential_address: Optional[str] = None
     postcode: Optional[str] = None
-    is_id_verified: Optional[int] = 1
+    is_id_verified: Optional[int] = 0
     tasks_done: int
     joined_date: str
 

@@ -2,7 +2,13 @@ import sqlite3
 from fastapi import APIRouter, HTTPException, status, Depends
 from server.database import get_db
 from server.schemas import UserRegister, UserLogin, TokenResponse, UserResponse
-from server.security import hash_password, verify_password, create_access_token, get_current_user
+from server.security import (
+    create_access_token,
+    get_current_user,
+    hash_password,
+    mask_id_number,
+    verify_password,
+)
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
@@ -35,7 +41,8 @@ def register(user_data: UserRegister):
                 # ID details are self-declared only. No document check happens, so new
                 # accounts start unverified (is_id_verified = 0) and no ID is invented.
                 user_data.id_type if user_data.id_number else None,
-                user_data.id_number.strip() if user_data.id_number else None,
+                # Data minimisation: only the last 4 characters are ever stored.
+                mask_id_number(user_data.id_number) if user_data.id_number else None,
                 user_data.residential_address.strip() if user_data.residential_address else None,
                 user_data.postcode.strip().upper() if user_data.postcode else None,
             ),

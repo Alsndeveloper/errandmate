@@ -44,6 +44,17 @@ def verify_password(plain_password: str, stored_hash: str) -> bool:
         return hmac.compare_digest(legacy_hex, stored_hash)
 
 
+def mask_id_number(id_number: str) -> str:
+    """Keep only the last 4 characters of an ID number, e.g. 'P98765432' -> '*****5432'.
+
+    The full number is never stored, so a database leak can't expose it.
+    """
+    cleaned = id_number.strip()
+    if len(cleaned) <= 4:
+        return "*" * len(cleaned)
+    return "*" * (len(cleaned) - 4) + cleaned[-4:]
+
+
 def create_access_token(data: Dict[str, Any], expires_hours: int = TOKEN_EXPIRY_HOURS) -> str:
     """
     Generates a secure cryptographically signed token (HMAC-SHA256).

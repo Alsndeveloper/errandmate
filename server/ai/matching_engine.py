@@ -27,7 +27,7 @@ def rank_matching_runners(
 
     # Fetch eligible runners (role in 'runner', 'both', not the poster)
     runners_sql = """
-        SELECT u.id, u.full_name, u.email, u.phone, u.role, u.tasks_done,
+        SELECT u.id, u.full_name, u.role, u.tasks_done,
                (SELECT AVG(rating) FROM ratings WHERE runner_id = u.id) as avg_rating,
                (SELECT COUNT(*) FROM ratings WHERE runner_id = u.id) as total_reviews,
                (SELECT COUNT(*) FROM tasks WHERE runner_id = u.id AND status IN ('accepted', 'in_progress')) as active_load
@@ -108,8 +108,8 @@ def rank_matching_runners(
         ranked.append({
             "runner_id": r_id,
             "full_name": runner["full_name"],
-            "email": runner["email"],
-            "phone": runner["phone"],
+            # No email/phone: this endpoint is public. Contact details are never
+            # shared with people who aren't part of an errand.
             "match_score_percent": total_match_score,
             "tasks_done": tasks_done,
             "average_rating": round(avg_rating, 1) if runner.get("avg_rating") else None,
